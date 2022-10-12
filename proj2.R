@@ -266,6 +266,7 @@ hist(strategy_3, breaks=100, xlab="Successful prisoners count")
 # We see that in strategy 1, either all prisoners win together or the majority loses together.
 # Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
 
+
 # Question 5 ------------------------------------------------------------------------------
 
 
