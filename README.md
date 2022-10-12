@@ -1,0 +1,2 @@
+# practical2_statistical_programming
+Statistical Programming Coursework 2
