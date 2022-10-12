@@ -97,15 +97,15 @@ pone <- function(n, k, strategy, nreps) {
   }
   
   # return the probability of a single player succeeding in finding their number
-  # which is the number of successes divided 
+  # which is the number of successes divided
   return((success_count / nreps))
 }
 
 
 
 
-
 # Question 2 ------------------------------------------------------------------------------
+
 
 # This question contains code for the function pall, which takes in n, strategy,
 # nreps as arguments and returns the probability of all prisoners succeeding in
@@ -146,28 +146,54 @@ pall <- function(n, strategy, nreps) {
       # the trial inside success_vec.
       success_vec[i] <- sum(num_pris_success)
     }
-  } else if (strategy == 1 || strategy == 2) {
+  } # if strategy = 1 or strategy = 2, do the following: 
+  else if (strategy == 1 || strategy == 2) {
+    # we loop / simulate this nreps times
     for(i in 1:nreps){
+      # same as before, we create card_number vector storing the numbers on cards
+      # in each box
       card_number <- sample(1:twon)
+      # num_pris_success is created to store number of successful prisoners in
+      # each trial
       num_pris_success <- 0
+      # loop through each prisoner from 1st to 2nth prisoner
       for(prisoner_num in 1:twon){
+        # declare variable boxes_opened = 0
+        # In strategy 1 and 2, each prisoner can only open n boxes
         boxes_opened = 0
+        # if strategy = 1, the prisoner starts by opening the box labeled with
+        # their number. Therefore, we declare current_box_num = prisoner_num
         if (strategy == 1) { current_box_num <- prisoner_num }
+        # If strategy 2, the prisoner starts by opening a randomly selected box
         else if (strategy == 2) { current_box_num <- sample(twon, 1) }
+        # while the prisoner has opened less than n boxes, do the following:
         while(boxes_opened<n){
+          # if the number of the card is the same as their prisoner number,
+          # then they have succeeded and can exit the loop
           if(card_number[current_box_num] == prisoner_num) {
+            # increment  num_pris_success by 1
             num_pris_success <- num_pris_success + 1
+            # exit loop
             break
           }
+          # increment boxes_opened by 1
           boxes_opened <- boxes_opened + 1
+          # the prisoner will look at the box that is the labeled with the card
+          # number next 
           current_box_num <- card_number[current_box_num]
         }
       }
+      # at the end of each trial, we store the number of successful prisoners
+      # in the vector success_vec
       success_vec[i] <- num_pris_success
     } 
   }
   
-  probability_all_succeed <- (length(success_vec[success_vec == twon])/nreps)*100
+  # the probability that all prisoners will succeed
+  # we count how many elements inside success_vec = 2n (which means 2n prisoners
+  # aka all prisoners succeeded). Divide this number by nreps to get the probability
+  probability_all_succeed <- (length(success_vec[success_vec == twon])/nreps)
+  # return the probability
   return(probability_all_succeed)
 }
 
