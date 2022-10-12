@@ -19,75 +19,81 @@
 
 pone <- function(n, k, strategy, nreps) {
   twon <- as.integer(n+n) # we store 2n into a variable and cast it into an int
+  
   # declare variable success_count which will be used to count how many times the prisoner
   # succeeded in finding their number
   success_count <- 0
+  
   # declare a variable prisoner_num and make it equal to k, which is the number of the
   # prisoner that was passed into the function. This is just to give the variable a
   # more descriptive name.
   prisoner_num <- k
   
-  # if strategy 1 is selected:
-  if(strategy == 1) {
-    # we will loop this nreps times (which is how many times we want to simulate this)
-    for(i in 1:nreps){
-      # declare a vector called card_number which contains 2n elements of unique 
-      # random values ranging from 1 to 2n. The index of each element represents
-      # the box number and the value of the element represents the number on the card
-      # inside each box.
+  # strategy 3 (aka the naive method) is separated because strategy 1 and 2 are similar
+  # and uses a lot of the same code while strategy 3 is completely different.
+  # if strategy 3 is selected
+  if (strategy == 3) {
+    # we loop / simulate this nreps times
+    for (i in 1:nreps) {
+      # declare card_number to be a vector containing unique random elements from 1 to 2n
+      # this represents the numbers written on the cards inside the boxes
       card_number <- sample(1:twon)
-      # declare a variable 'boxes_opened' to keep track of how many boxes the prisoner
-      # has opened so far.
+      # since this strategy is opening n boxes completely randomly, we generated a vector
+      # which randomly selects n elements (no duplicates) from card_number
+      box_opened_hist = sample(card_number, n)
+      # then we check whether the prisoner number is inside box_opened_hist
+      if (prisoner_num %in% sample(card_number,n)) {
+        # if prisoner_number is inside the vector box_opened_hist, then that means the
+        # prisoner succeeded in finding their number
+        # we increment success_count by 1
+        success_count <- success_count + 1
+      }
+    }
+  }
+  # we group strategy 1 and 2 because they are very similar and there are only a few
+  # lines of code different between the two strategies
+  # else in the case where strategy is 1 or 2: 
+  else if (strategy == 1 || strategy == 2){
+    # similarly, we loop / simulate this nreps times
+    for(i in 1:nreps){
+      # we declare card_number to be a vector containing unique random numbers from 1-2n
+      card_number <- sample(1:twon)
+      # we declare a variable boxes_opened which is the number of boxes opened
       boxes_opened <- 0
-      # In the first strategy, the prisoner will start by opening a box with the same number
-      # as their prisoner number, therefore we assign current_box_num to equal the prisoner_num.
-      current_box_num <- prisoner_num
-      # As long as the number of boxes opened (boxes_opened) is less than n, the program will:
+      # if strategy = 1 we do the following:
+      if (strategy == 1) {
+        # Assign the current_box_num variable to equal the prisoner_num (in this case,
+        # the current_box_num is the first box right now)
+        current_box_num <- prisoner_num 
+      } # if strategy = 2, we do the following:
+      # the only difference between strategy 1 and strategy 2 is that strategy 2 starts by
+      # choosing a randomly selected box rather than a box labeled with the same number as
+      # their prisoner number
+      else if (strategy == 2) {
+        # prisoner starts from a randomly selected box in strategy 2
+        # assign current_box_num to be a random number from 1 to 2n
+        current_box_num <- sample(twon, 1)
+      }
+      # while the number of boxes opened (boxes_opened) is less than n,
+      # we do the following:
       while(boxes_opened < n) {
         # check whether the number on the card inside the current box opened is the same as
         # the prisoner number
         if(card_number[current_box_num] == prisoner_num) {
-          # If it is the same, the we increment success_count by 1.
+          # if the number written on the card inside the box opened is the same as the
+          # prisoner number, we increment success_count by 1. This means that the prisoner
+          # has succeeded in finding their number.
           success_count <- success_count + 1
-          # We can now exit the loop. The prisoner has already found their number, and there is
-          # no longer any need to continue.
+          # we can exit the loop as they no longer need to look for their number
           break
         }
         # if the number on the card of the box opened does not equal to the prisoner number,
-        # we increment boxes_opened by 1. The current_box_num is assigned to the number on
-        # the card.
+        # we increment boxes_opened by 1.
         boxes_opened = boxes_opened + 1
+        # The current_box_num is assigned to the number on the card (following the strategy).
         current_box_num <- card_number[current_box_num]
       }
     } 
-  }
-  
-  # if strategy 2 is selected
-  else if (strategy == 2) {
-    # similarly, we loop/simulate this nreps times
-    for(i in 1:nreps) {
-      card_number <- sample(1:twon)
-      if(card_number[prisoner_num] == prisoner_num) {
-        success_count <- success_count + 1
-      }
-      else {
-        box_opened_hist = sample(card_number, n-1)
-        if (prisoner_num %in% box_opened_hist) {
-          success_count <- success_count + 1
-        } 
-      }
-    }
-  }
-  
-  # if strategy 3 is selected
-  else if (strategy == 3) {
-    for (i in 1:nreps) {
-      card_number <- sample(1:twon)
-      box_opened_hist = sample(card_number, n)
-      if (prisoner_num %in% sample(card_number,n)) {
-        success_count <- success_count + 1
-      }
-    }
   }
   
   # return the probability of a single player succeeding in finding their number
@@ -97,11 +103,16 @@ pone <- function(n, k, strategy, nreps) {
 
 
 
+
+
 # Question 2 ------------------------------------------------------------------------------
 
 # This question contains code for the function pall, which takes in n, strategy,
 # nreps as arguments and returns the probability of all prisoners succeeding in
 # finding their number.
+
+# certain comments explaining the reasoning behind the code or variables will be
+# ommitted as much of the concept is the same as in pone
 
 pall <- function(n, strategy, nreps) {
   success_vec <- rep(0,nreps)
