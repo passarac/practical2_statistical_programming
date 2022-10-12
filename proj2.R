@@ -115,16 +115,45 @@ pone <- function(n, k, strategy, nreps) {
 # ommitted as much of the concept is the same as in pone
 
 pall <- function(n, strategy, nreps) {
+  # we declare a vector called success_vec of length nreps. It will be used to
+  # store how many prisoners succeeded in finding their number in each trial.
   success_vec <- rep(0,nreps)
+  # declare twon to equal 2n
   twon <- as.integer(n+n)
   
-  if(strategy == 1) {
+  # in strategy 3, prisoners open the boxes randomly
+  # if strategy = 3 we do the following:
+  if(strategy == 3) {
+    # we loop / simulate this nreps times
+    for(i in 1:nreps){
+      # create a vector which stores the numbers written on the card in each box
+      card_number <- sample(1:twon)
+      # declare a variable num_pris_success which stores the number of prisoners
+      # that succeeded in finding their number in each trial
+      num_pris_success <- 0
+      # now wee loop through 1 to 2n prisoners
+      for(prisoner_num in 1:twon){
+        # create a vector containing unique randomly generated numbers 1 to 2n
+        box_opened_hist <- sample(card_number, n)
+        # if the prisoner number is in box_opened_hist, then that means they have
+        # succeeded in finding their number
+        if (prisoner_num %in% sample(card_number,n)) {
+          # we increment num_pris_success by 1
+          num_pris_success <- num_pris_success + 1
+        }
+      }
+      # at the end of each trial, we store the number of successful prisoners of
+      # the trial inside success_vec.
+      success_vec[i] <- sum(num_pris_success)
+    }
+  } else if (strategy == 1 || strategy == 2) {
     for(i in 1:nreps){
       card_number <- sample(1:twon)
       num_pris_success <- 0
       for(prisoner_num in 1:twon){
         boxes_opened = 0
-        current_box_num <- prisoner_num
+        if (strategy == 1) { current_box_num <- prisoner_num }
+        else if (strategy == 2) { current_box_num <- sample(twon, 1) }
         while(boxes_opened<n){
           if(card_number[current_box_num] == prisoner_num) {
             num_pris_success <- num_pris_success + 1
@@ -136,34 +165,6 @@ pall <- function(n, strategy, nreps) {
       }
       success_vec[i] <- num_pris_success
     } 
-  } else if (strategy == 2) {
-    for(i in 1:nreps){
-      card_number <- sample(1:twon)
-      num_pris_success <- 0
-      for(prisoner_num in 1:twon){
-        if(card_number[prisoner_num] == prisoner_num) {
-          num_pris_success <- num_pris_success + 1
-        } else {
-          box_opened_hist <- sample(card_number, n-1)
-          if (prisoner_num %in% box_opened_hist) {
-            num_pris_success <- num_pris_success + 1
-          } 
-        }
-      }
-      success_vec[i] <- sum(num_pris_success)
-    }
-  } else if (strategy == 3) {
-    for(i in 1:nreps){
-      card_number <- sample(1:twon)
-      num_pris_success <- 0
-      for(prisoner_num in 1:twon){
-        box_opened_hist <- sample(card_number, n)
-        if (prisoner_num %in% sample(card_number,n)) {
-          num_pris_success <- num_pris_success + 1
-        }
-      }
-      success_vec[i] <- sum(num_pris_success)
-    }
   }
   
   probability_all_succeed <- (length(success_vec[success_vec == twon])/nreps)*100
