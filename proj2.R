@@ -28,32 +28,32 @@ pall <- function(n, strategy, nreps) {
   
   if(strategy == 1) {
     for(i in 1:nreps){
-      ticket <- sample(1:twon)
+      card_number <- sample(1:twon)
       num_pris_success <- 0
       for(prisoner_num in 1:twon){
         boxes_opened = 0
         current_box_num <- prisoner_num
         while(boxes_opened<n){
-          if(ticket[current_box_num] == prisoner_num) {
+          if(card_number[current_box_num] == prisoner_num) {
             num_pris_success <- num_pris_success + 1
             break
           }
           boxes_opened = boxes_opened + 1
-          current_box_num <- ticket[current_box_num]
+          current_box_num <- card_number[current_box_num]
         }
       }
       success_vec[i] <- num_pris_success
     } 
   } else if (strategy == 2) {
     for(i in 1:nreps){
-      ticket = sample(1:twon)
+      card_number = sample(1:twon)
       num_pris_success <- 0
       for(prisoner_num in 1:twon){
-        if(ticket[prisoner_num] == prisoner_num) {
+        if(card_number[prisoner_num] == prisoner_num) {
           num_pris_success <- num_pris_success + 1
         } else {
-          box_opened_hist = sample(ticket, 49)
-          if (prisoner_num %in% sample(ticket,50)) {
+          box_opened_hist = sample(card_number, n-1)
+          if (prisoner_num %in% box_opened_hist) {
             num_pris_success <- num_pris_success + 1
           } 
         }
@@ -65,8 +65,8 @@ pall <- function(n, strategy, nreps) {
       ticket = sample(1:twon)
       num_pris_success <- 0
       for(prisoner_num in 1:twon){
-        box_opened_hist = sample(ticket, 50)
-        if (prisoner_num %in% sample(ticket,50)) {
+        box_opened_hist = sample(ticket, n)
+        if (prisoner_num %in% sample(ticket,n)) {
           num_pris_success <- num_pris_success + 1
         }
       }
@@ -87,11 +87,21 @@ pall <- function(n, strategy, nreps) {
 
 # one prisoner succeeding in finding their number
 ## n = 5
+
+
 ## n = 50
+
 
 # all prisoners succeeding in finding their number
 ## n = 5
+cat("Strategy 1 resulted in a success rate of ", pall(5,1,10000), "%.",sep="")
+cat("Strategy 1 resulted in a success rate of ", pall(5,2,10000), "%.",sep="")
+cat("Strategy 1 resulted in a success rate of ", pall(5,3,10000), "%.",sep="")
+
 ## n = 50
+cat("Strategy 1 resulted in a success rate of ", pall(50,1,10000), "%.",sep="")
+cat("Strategy 1 resulted in a success rate of ", pall(50,2,10000), "%.",sep="")
+cat("Strategy 1 resulted in a success rate of ", pall(50,3,10000), "%.",sep="")
 
 # Question 4
 
