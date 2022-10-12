@@ -6,7 +6,7 @@
 
 # Code description
 
-
+## The purpose of this code is to stimulate the prisoner problem.
 
 # Question 1 ------------------------------------------------------------------------------
 
@@ -194,7 +194,7 @@ pall <- function(n, strategy, nreps) {
   # aka all prisoners succeeded). Divide this number by nreps to get the probability
   probability_all_succeed <- (length(success_vec[success_vec == twon])/nreps)
   # return the probability
-  return(probability_all_succeed)
+  return(list(probability_all_succeed, success_vec ))
 }
 
 
@@ -210,38 +210,69 @@ num_trials = 100000
 print("Estimating the probability of a single prisoner succeeding:")
 n = 5
 print("n = 5")
-cat("Strategy 1 resulted in a success rate of ", pone(n, 3, 1,num_trials), ".",sep="")
-cat("Strategy 2 resulted in a success rate of ", pone(n, 3, 2,num_trials), ".",sep="")
-cat("Strategy 3 resulted in a success rate of ", pone(n, 3, 3,num_trials), ".",sep="")
+cat("Strategy 1 resulted in probability of ", pone(n, 3, 1,num_trials), ".",sep="")
+cat("Strategy 2 resulted in probability of ", pone(n, 3, 2,num_trials), ".",sep="")
+cat("Strategy 3 resulted in probability of ", pone(n, 3, 3,num_trials), ".",sep="")
 
 n = 50
-cat("Strategy 1 resulted in a success rate of ", pone(n, 34, 1,num_trials), ".",sep="")
-cat("Strategy 2 resulted in a success rate of ", pone(n, 34, 2,num_trials), ".",sep="")
-cat("Strategy 3 resulted in a success rate of ", pone(n, 34, 3,num_trials), ".",sep="")
+cat("Strategy 1 resulted in probability of ", pone(n, 34, 1,num_trials), ".",sep="")
+cat("Strategy 2 resulted in probability of ", pone(n, 34, 2,num_trials), ".",sep="")
+cat("Strategy 3 resulted in probability of ", pone(n, 34, 3,num_trials), ".",sep="")
 
 
 # all prisoners succeeding in finding their number
 print("Estimating the probability of all prisoners succeeding:")
 n = 5
-cat("Strategy 1 resulted in a success rate of ", pall(n,1,num_trials), "%.",sep="")
-cat("Strategy 2 resulted in a success rate of ", pall(n,2,num_trials), "%.",sep="")
-cat("Strategy 3 resulted in a success rate of ", pall(n,3,num_trials), "%.",sep="")
+cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials)[1], ".",sep="")
+cat("Strategy 2 resulted in probability of ", pall(n,2,num_trials)[1], ".",sep="")
+cat("Strategy 3 resulted in probability of ", pall(n,3,num_trials)[1], ".",sep="")
 
 n = 50
-cat("Strategy 1 resulted in a success rate of ", pall(n,1,num_trials), "%.",sep="")
-cat("Strategy 2 resulted in a success rate of ", pall(n,2,num_trials), "%.",sep="")
-cat("Strategy 3 resulted in a success rate of ", pall(n,3,num_trials), "%.",sep="")
+cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials)[1], ".",sep="")
+cat("Strategy 2 resulted in probability of ", pall(n,2,num_trials)[1], ".",sep="")
+cat("Strategy 3 resulted in probability of ", pall(n,3,num_trials)[1], ".",sep="")
+
 
 
 # Question 4 ------------------------------------------------------------------------------
 
 # In this section, we elaborate why the results are surprising.
 
+## From running the simulations, we are able to see that one of the three strategies work
+# surprisingly well which is strategy 1 which gives an approximate 31% chance of all
+# prisoners succeeding in finding their numbers. We found this surprising because we know
+# that the probability of one prisoner succeeding is 0.5. Say if n = 50, and if we were to 
+# think about this naively, to find the probability of all prisoners succeeding, we would do:
+# P(success) = (0.5)^100 (where n = 50), which would give us an extremely extremely low
+# probability. That is why it is surprising to find out that there is a way where there is a
+# 31% chance of all prisoners succeeding. When we calculate the probability using the 3rd 
+# strategy, the probability of each prisoner succeeding is independent of each other. However,
+# when we use Strategy 2, that is no longer the case.
+
+# Below we can see the difference in probabilities and number of successful prisoners between 
+# Strategy 1 and Strategy 3.
+
+par(mfrow=c(1,3))
+
+strategy_1 <- unlist(pall(50,1,1000)[2])
+hist(strategy_1, breaks=100, xlab="Successful prisoners count")
+
+strategy_2 <- unlist(pall(50,2,1000)[2])
+hist(strategy_2, breaks=100, xlab="Successful prisoners count")
+
+strategy_3 <- unlist(pall(50,3,1000)[2])
+hist(strategy_3, breaks=100, xlab="Successful prisoners count")
+
+# We see that in strategy 1, either all prisoners win together or the majority loses together.
+# Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
+
 # Question 5 ------------------------------------------------------------------------------
 
 
 
+
 # Question 6 ------------------------------------------------------------------------------
+
 
 
 
