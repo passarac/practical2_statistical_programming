@@ -250,7 +250,8 @@ cat("Strategy 3 resulted in probability of ", pall(n,3,num_trials)[1], ".",sep="
 # when we use Strategy 2, that is no longer the case.
 
 # Below we can see the difference in probabilities and number of successful prisoners between 
-# Strategy 1 and Strategy 3.
+# Strategy 1 and Strategy 3. We visualize the frequencies of each number of successful prisoners
+# below for strategies 1, 2, and 3 in the form of histograms.
 
 par(mfrow=c(1,3))
 
