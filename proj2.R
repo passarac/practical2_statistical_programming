@@ -26,32 +26,23 @@
 
 # Helper / Additional functions
 
-get_strat3_success_count <- function(n, pris_n, nreps) {
-  success_cnt = 0
-  for (i in 1:nreps) {
-    card_number <- sample(1:as.integer(n+n))
-    if (pris_n %in% sample(card_number,n)) { 
-      success_cnt <- success_cnt + 1}
-  }
-  return(success_cnt)
-}
 
 is_successful <- function(n, pris_n, card_num, strategy) {
   
   if(strategy == 3) {
     if (pris_n %in% sample(card_num,n)) { return (1) }
     else {return (0)}
+  } else {
+    boxes_opened <- 0
+    if (strategy == 1) { current_box_num <- pris_n } 
+    else if (strategy == 2) { current_box_num <- sample(as.integer(n+n), 1) }
+    while(boxes_opened < n) {
+      if(card_num[current_box_num] == pris_n) { return(1) }
+      boxes_opened = boxes_opened + 1
+      current_box_num <- card_num[current_box_num]
+    }
+    return (0)  
   }
-  
-  boxes_opened <- 0
-  if (strategy == 1) { current_box_num <- pris_n } 
-  else if (strategy == 2) { current_box_num <- sample(as.integer(n+n), 1) }
-  while(boxes_opened < n) {
-    if(card_num[current_box_num] == pris_n) { return(1) }
-    boxes_opened = boxes_opened + 1
-    current_box_num <- card_num[current_box_num]
-  }
-  return (0) 
 }
 
 
@@ -62,23 +53,12 @@ pone <- function(n, k, strategy, nreps) {
   two_n <- as.integer(n+n) 
   success_count <- 0
   prisoner_num <- k
-  if (strategy == 3) {
-    for (i in 1:nreps) {
-      card_numbers <- sample(1:two_n)
-      if (prisoner_num %in% sample(card_numbers,n)) {
-        success_count <- success_count + 1
-      } 
-    }
-  }
-  else if (strategy == 1 || strategy == 2){
-    for(i in 1:nreps){
-      card_numbers <- sample(1:two_n)
-      success_count <- success_count + is_successful(n, prisoner_num, card_numbers, strategy)
-    }
+  for(i in 1:nreps) { 
+    card_numbers <- sample(1:two_n)
+    success_count <- success_count + is_successful(n, prisoner_num, card_numbers, strategy)
   }
   return((success_count / nreps))
 }
-
 
 
 
@@ -88,29 +68,15 @@ pall <- function(n, strategy, nreps) {
   success_vec <- rep(0,nreps)
   two_n <- as.integer(n+n)
   
-  if(strategy == 3) {
-    for(i in 1:nreps){
-      card_numbers <- sample(1:two_n)
-      num_pris_success <- 0
-      for(prisoner_num in 1:two_n){
-        box_opened_hist <- sample(card_numbers, n)
-        if (prisoner_num %in% sample(card_numbers,n)) {
-          num_pris_success <- num_pris_success + 1
-        }
-      }
-      success_vec[i] <- sum(num_pris_success)
+  for(i in 1:nreps){
+    card_numbers <- sample(1:two_n)
+    num_pris_success <- 0
+    for(prisoner_num in 1:two_n){
+      num_pris_success <- num_pris_success + is_successful(n, prisoner_num, card_numbers, strategy)
     }
+    success_vec[i] <- sum(num_pris_success)
   }
-  else if (strategy == 1 || strategy == 2) {
-    for(i in 1:nreps){
-      card_numbers <- sample(1:two_n)
-      num_pris_success <- 0
-      for(prisoner_num in 1:two_n){
-        num_pris_success <- num_pris_success + is_successful(n, prisoner_num, card_numbers, strategy)
-      }
-      success_vec[i] <- num_pris_success
-    }
-  }
+  
   probability_all_succeed <- (length(success_vec[success_vec == two_n])/nreps)
   return(list(probability_all_succeed, success_vec))
 }
@@ -122,7 +88,7 @@ pall <- function(n, strategy, nreps) {
 # Here, we estimate the individual and joint success probabilities for each strategy
 # for when n = 5 and n = 50.
 
-num_trials = 100000
+num_trials = 1000
 
 # one prisoner succeeding in finding their number
 print("Estimating the probability of a single prisoner succeeding:")
