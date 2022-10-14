@@ -28,7 +28,6 @@
 
 
 is_successful <- function(n, pris_n, card_num, strategy) {
-  
   if(strategy == 3) {
     if (pris_n %in% sample(card_num,n)) { return (1) } else { return (0) }
   } else {
