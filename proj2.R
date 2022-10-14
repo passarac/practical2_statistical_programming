@@ -26,7 +26,6 @@
 
 # Helper / Additional functions
 
-
 is_successful <- function(n, pris_n, card_num, strategy) {
   if(strategy == 3){if (pris_n %in% sample(card_num,n)){return(1)}else{return(0)}} 
   boxes_opened <- 0
@@ -39,9 +38,7 @@ is_successful <- function(n, pris_n, card_num, strategy) {
   return (0)  
 }
 
-
-# Question 1 -----------------------------------------------------------------------------------------------------------
-
+# pone function
 
 pone <- function(n, k, strategy, nreps) {
   success_count <- 0
@@ -49,8 +46,7 @@ pone <- function(n, k, strategy, nreps) {
   return((success_count / nreps))
 }
 
-
-# Question 2 ------------------------------------------------------------------------------------------------------------
+# pall function
 
 pall <- function(n, strategy, nreps) {
   success_vec <- rep(0,nreps)
@@ -65,8 +61,6 @@ pall <- function(n, strategy, nreps) {
   return(list(probability_all_succeed, success_vec))
 }
 
-
-# Question 3 -------------------------------------------------------------------------------------------------------------
 
 # Here, we estimate the individual and joint success probabilities for each strategy
 # for when n = 5 and n = 50.
@@ -100,9 +94,6 @@ cat("Strategy 2 resulted in probability of ", unlist(pall(n,2,num_trials)[1]), "
 cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), ".",sep="")
 
 
-
-# Question 4 -----------------------------------------------------------------------------------------------------------
-
 # In this section, we elaborate why the results are surprising.
 
 ## From running the simulations, we are able to see that one of the three strategies work
@@ -135,12 +126,6 @@ hist(strategy_3, breaks=100, xlab="Successful prisoners count")
 # Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
 
 
-# Question 5 ------------------------------------------------------------------------------------------------
-
-
-
-
-# Question 6 ------------------------------------------------------------------------------------------------
 
 
 
