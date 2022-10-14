@@ -51,7 +51,6 @@ is_successful <- function(n, pris_n, card_num, strategy) {
 pone <- function(n, k, strategy, nreps) {
   two_n <- as.integer(n+n) 
   success_count <- 0
-  
   prisoner_num <- k
   for(i in 1:nreps) { 
     card_numbers <- sample(1:two_n)
@@ -67,20 +66,17 @@ pone <- function(n, k, strategy, nreps) {
 pall <- function(n, strategy, nreps) {
   success_vec <- rep(0,nreps)
   two_n <- as.integer(n+n)
-  
   for(i in 1:nreps){
     card_numbers <- sample(1:two_n)
-    num_pris_success <- 0
+    prisoner_status = rep(1,two_n)
     for(prisoner_num in 1:two_n){
-      num_pris_success <- num_pris_success + is_successful(n, prisoner_num, card_numbers, strategy)
+      prisoner_status[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
     }
-    success_vec[i] <- sum(num_pris_success)
+    success_vec[i] <- sum(prisoner_status)
   }
-  
   probability_all_succeed <- (length(success_vec[success_vec == two_n])/nreps)
   return(list(probability_all_succeed, success_vec))
 }
-
 
 
 # Question 3 ------------------------------------------------------------------------------
@@ -88,7 +84,7 @@ pall <- function(n, strategy, nreps) {
 # Here, we estimate the individual and joint success probabilities for each strategy
 # for when n = 5 and n = 50.
 
-num_trials = 1000
+num_trials = 10000
 
 # one prisoner succeeding in finding their number
 print("Estimating the probability of a single prisoner succeeding:")
