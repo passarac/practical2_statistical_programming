@@ -28,9 +28,7 @@
 
 
 is_successful <- function(n, pris_n, card_num, strategy) {
-  if(strategy == 3) {
-    if (pris_n %in% sample(card_num,n)) { return (1) } else { return (0) }
-  } 
+  if(strategy == 3){if (pris_n %in% sample(card_num,n)){return(1)}else{return(0)}} 
   boxes_opened <- 0
   current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
   while(boxes_opened < n) {
@@ -48,8 +46,7 @@ is_successful <- function(n, pris_n, card_num, strategy) {
 pone <- function(n, k, strategy, nreps) {
   two_n <- as.integer(n+n) 
   success_count <- 0
-  prisoner_num <- k
-  for(i in 1:nreps) { success_count <- success_count + is_successful(n, prisoner_num, sample(1:two_n), strategy)}
+  for(i in 1:nreps){success_count<-success_count+is_successful(n,k,sample(1:two_n),strategy)}
   return((success_count / nreps))
 }
 
