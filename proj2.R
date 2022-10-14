@@ -30,11 +30,10 @@
 is_successful <- function(n, pris_n, card_num, strategy) {
   
   if(strategy == 3) {
-    if (pris_n %in% sample(card_num,n)) { return (1) } else {return (0)}
+    if (pris_n %in% sample(card_num,n)) { return (1) } else { return (0) }
   } else {
     boxes_opened <- 0
-    if (strategy == 1) { current_box_num <- pris_n } 
-    else if (strategy == 2) { current_box_num <- sample(as.integer(n+n), 1) }
+    current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
     while(boxes_opened < n) {
       if(card_num[current_box_num] == pris_n) { return(1) }
       boxes_opened = boxes_opened + 1
