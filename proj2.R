@@ -44,9 +44,8 @@ is_successful <- function(n, pris_n, card_num, strategy) {
 
 
 pone <- function(n, k, strategy, nreps) {
-  two_n <- as.integer(n+n) 
   success_count <- 0
-  for(i in 1:nreps){success_count<-success_count+is_successful(n,k,sample(1:two_n),strategy)}
+  for(i in 1:nreps){success_count<-success_count+is_successful(n,k,sample(1:as.integer(n+n)),strategy)}
   return((success_count / nreps))
 }
 
