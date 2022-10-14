@@ -27,7 +27,7 @@
 # Helper / Additional functions
 
 is_successful <- function(n, pris_n, card_num, strategy) {
-  if(strategy == 3){if (pris_n %in% sample(card_num,n)){return(1)}else{return(0)}} 
+  if(strategy == 3) {if (pris_n %in% sample(card_num,n)){ return(1) } else{ return(0)} } 
   boxes_opened <- 0
   current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
   while(boxes_opened < n) {
