@@ -1,8 +1,8 @@
 # Statistical Programming Coursework 2
 
 # Members and contributions ---------------------------------------------------------------
-## 1. Stefi Tirkova
-## 2. Passara Chanchotisatien
+## 1. Stefi Tirkova : Q4, Q5, Q6
+## 2. Passara Chanchotisatien: Q1, Q2, Q3
 
 # CODE DESCRIPTION
 
