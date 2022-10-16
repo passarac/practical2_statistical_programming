@@ -27,12 +27,18 @@
 # Helper / Additional functions
 
 is_successful <- function(n, pris_n, card_num, strategy) {
-  if(strategy == 3) {if (pris_n %in% sample(card_num,n)){ return(1) } else{ return(0)} } 
+  if(strategy == 3) {
+    if (pris_n %in% sample(card_num,n)){ return(1) } 
+    else{ return(0)} 
+  } 
   boxes_opened <- 0
-  current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
+  # intitialise the first box to open according to the strategy
+  # I THINK THIS IS EASIER TO READ
+  current_box_num <- if (strategy == 1) pris_n else if (strategy == 2) sample(as.integer(2*n), 1)
+  # current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
   while(boxes_opened < n) {
     if(card_num[current_box_num] == pris_n) { return(1) }
-    boxes_opened = boxes_opened + 1
+    boxes_opened <- boxes_opened + 1
     current_box_num <- card_num[current_box_num]
   }
   return (0)  
@@ -42,7 +48,9 @@ is_successful <- function(n, pris_n, card_num, strategy) {
 
 pone <- function(n, k, strategy, nreps) {
   success_count <- 0
-  for(i in 1:nreps){success_count<-success_count+is_successful(n,k,sample(1:as.integer(n+n)),strategy)}
+  for(i in 1:nreps){
+    success_count <- success_count + is_successful(n,k,sample(1:as.integer(n+n)), strategy)
+  }
   return((success_count / nreps))
 }
 
@@ -53,10 +61,14 @@ pall <- function(n, strategy, nreps) {
   two_n <- as.integer(n+n)
   for(i in 1:nreps){
     card_numbers <- sample(1:two_n)
-    prisoner_status = rep(1,two_n)
-    for(prisoner_num in 1:two_n){ prisoner_status[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)}
-    success_vec[i] <- sum(prisoner_status)
+    prisoners_success <- rep(1,two_n)
+    for(prisoner_num in 1:two_n){ 
+      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
+    }
+    # calculate how many prisoners succeeded in current simulation by summing over their successes
+    success_vec[i] <- sum(prisoners_success)
   }
+  # p_success = (number of simulations all prisoners succeed)/(number of simulations) 
   probability_all_succeed <- (length(success_vec[success_vec == two_n])/nreps)
   return(list(probability_all_succeed, success_vec))
 }
@@ -113,8 +125,12 @@ cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), "
 
 par(mfrow=c(1,3))
 
+# BETTER TO SAVE THE RESULTS OF pall ABOVE THAN TO RERUN SUMULATIONS AGAIN
+
 strategy_1 <- unlist(pall(50,1,1000)[2])
 hist(strategy_1, breaks=100, xlab="Successful prisoners count")
+
+# WHEN RUNNING I GET: Error in plot.new() : figure margins too large
 
 strategy_2 <- unlist(pall(50,2,1000)[2])
 hist(strategy_2, breaks=100, xlab="Successful prisoners count")
@@ -128,5 +144,67 @@ hist(strategy_3, breaks=100, xlab="Successful prisoners count")
 
 
 
+# HELPER FUNCTION
+
+get_loop_len <- function(start_box, random_shuffle, boxes_is_visited){
+  loop_len <- 1
+  boxes_is_visited[start_box] <- 1
+  current_box <- start_box
+  while (random_shuffle[current_box] != start_box){
+    current_box <- random_shuffle[current_box]
+    loop_len <- loop_len + 1
+    boxes_is_visited[current_box] <- 1
+  }
+  return (list(loop_len, boxes_is_visited))
+  
+}
+
+#TESTING THE FUNCTION
+# shuffle <- c(1,3,4,2)
+# visited <- rep(0,4)
+# find_loop_len(1,shuffle, visited)
+
+
+dloop <- function(n, nreps){
+  # vector to store the number of times a loop of some length (from 1 to 2n) has been seen  
+  loop_len_counts <- rep(0,2*n)
+  
+  # run simulation nrep times and count length of loops
+  for (i in 1:nreps){
+    loop_len_occurs <- rep(0,2*n)
+    # get a random suffling of cards from 1 to 2n 
+    random_shuffle <- sample(1:(2*n))
+    boxes_is_visited <- rep(0,2*n)
+    start_box <- 1
+    while (sum(boxes_is_visited) != 2*n){
+      result <- get_loop_len(start_box, random_shuffle, boxes_is_visited)
+      loop_len_occurs[unlist(result[1])] <-  1
+      boxes_is_visited <- unlist(result[2])
+      # choose a new start box by choosing the first non-visited box
+      start_box <- which(boxes_is_visited == 0)[1]
+    }
+    loop_len_counts <- loop_len_counts + loop_len_occurs
+    
+  }
+  
+  # convert counts to probabilites
+  # SHOULD THE PROBABILITIES SUM TO 1?
+  # probs <- loop_len_counts/sum(loop_len_counts)
+  probs <- loop_len_counts/nreps
+  return (probs)
+}
+
+
+
+
+nreps = 10000
+n = 50
+probs <- dloop(n,nreps)
+sum(probs)
+sum(probs[n:(2*n)])
+
+
+probs
+barplot(probs, xlab="Loop length", ylab="probability")
 
 
