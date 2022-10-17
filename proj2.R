@@ -101,42 +101,40 @@ cat("Strategy 2 resulted in probability of ", unlist(pall(n,2,num_trials)[1]), "
 cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), ".",sep="")
 
 n = 50
-cat("Strategy 1 resulted in probability of ", unlist(pall(n,1,num_trials)[1]), ".",sep="")
-cat("Strategy 2 resulted in probability of ", unlist(pall(n,2,num_trials)[1]), ".",sep="")
-cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), ".",sep="")
+# save results to plot later
+strategy_1_all50 <- pall(n,1,num_trials)
+strategy_2_all50 <- pall(n,2,num_trials)
+strategy_3_all50 <- pall(n,3,num_trials)
+cat("Strategy 1 resulted in probability of ", unlist(strategy_1_all50[1]), ".",sep="")
+cat("Strategy 2 resulted in probability of ", unlist(strategy_2_all50[1]), ".",sep="")
+cat("Strategy 3 resulted in probability of ", unlist(strategy_3_all50[1]), ".",sep="")
 
 
 # In this section, we elaborate why the results are surprising.
 
-## From running the simulations, we are able to see that one of the three strategies work
-# surprisingly well which is strategy 1 which gives an approximate 31% chance of all
-# prisoners succeeding in finding their numbers. We found this surprising because we know
-# that the probability of one prisoner succeeding is 0.5. Say if n = 50, and if we were to 
-# think about this naively, to find the probability of all prisoners succeeding, we would do:
-# P(success) = (0.5)^100 (where n = 50), which would give us an extremely extremely low
-# probability. That is why it is surprising to find out that there is a way where there is a
-# 31% chance of all prisoners succeeding. When we calculate the probability using the 3rd 
+## From running the simulations, we are able to see that one of the three strategies works
+# surprisingly - strategy 1 which gives an approximate 31% chance of all
+# prisoners succeeding in finding their numbers. 
+# We found this surprising because we know that the probability of one prisoner succeeding is 0.5. 
+# Say if n = 50, and if we were to think about this naively, to find the probability of all prisoners succeeding, 
+# we would do the following calculation:
+# P(success) = (0.5)^100 (where n = 50), 
+# which would give us an extremely extremely low probability (almost zero). 
+# That is why it is surprising to find out that there is a strategy that gives
+# 31% chance of all prisoners succeeding. When we calculate the probability using the 3rd
 # strategy, the probability of each prisoner succeeding is independent of each other. However,
-# when we use Strategy 2, that is no longer the case.
+# when we use Strategy 1, that is no longer the case.
 
 # Below we can see the difference in probabilities and number of successful prisoners between 
 # Strategy 1 and Strategy 3. We visualize the frequencies of each number of successful prisoners
 # below for strategies 1, 2, and 3 in the form of histograms.
 
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
+# NOTE: these figures might be overwritten by later figures, please rerun following 4 lines if you want to see the figures again
 par(mfrow=c(1,3))
-
-# BETTER TO SAVE THE RESULTS OF pall ABOVE THAN TO RERUN SUMULATIONS AGAIN
-
-strategy_1 <- unlist(pall(50,1,1000)[2])
-hist(strategy_1, breaks=100, xlab="Successful prisoners count")
-
-# WHEN RUNNING I GET: Error in plot.new() : figure margins too large
-
-strategy_2 <- unlist(pall(50,2,1000)[2])
-hist(strategy_2, breaks=100, xlab="Successful prisoners count")
-
-strategy_3 <- unlist(pall(50,3,1000)[2])
-hist(strategy_3, breaks=100, xlab="Successful prisoners count")
+hist(unlist(strategy_1_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 1 (n=50)")
+hist(unlist(strategy_2_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 2 (n=50)")
+hist(unlist(strategy_3_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 3 (n=50)")
 
 # We see that in strategy 1, either all prisoners win together or the majority loses together.
 # Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
@@ -159,12 +157,6 @@ get_loop_len <- function(start_box, random_shuffle, boxes_is_visited){
   
 }
 
-#TESTING THE FUNCTION
-# shuffle <- c(1,3,4,2)
-# visited <- rep(0,4)
-# find_loop_len(1,shuffle, visited)
-
-
 dloop <- function(n, nreps){
   # vector to store the number of times a loop of some length (from 1 to 2n) has been seen  
   loop_len_counts <- rep(0,2*n)
@@ -184,27 +176,55 @@ dloop <- function(n, nreps){
       start_box <- which(boxes_is_visited == 0)[1]
     }
     loop_len_counts <- loop_len_counts + loop_len_occurs
-    
   }
   
   # convert counts to probabilites
-  # SHOULD THE PROBABILITIES SUM TO 1?
-  # probs <- loop_len_counts/sum(loop_len_counts)
   probs <- loop_len_counts/nreps
   return (probs)
 }
 
-
-
-
+# Visualising probabilities for n=50
 nreps = 10000
 n = 50
 probs <- dloop(n,nreps)
-sum(probs)
-sum(probs[n:(2*n)])
+
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
+# NOTE: Following 2 figures overwrite previous ones, please rerun visualisation code if you want to see previous figures
+par(mfrow=c(2,1))
+barplot(probs*100, xlab="Loop length", ylab="Probability (%)", names.arg = c(1:100))
+title("Probability of each loop length occuring at least once (n=50)")
 
 
-probs
-barplot(probs, xlab="Loop length", ylab="probability")
+# A group of 2n prisoners will succeed with strategy 1 iff the longest loop is at most n
+# The code below computes the probability distribution of longest loops for n=50
+
+longest_loop <- function(n, nreps){
+  longest_count <- rep(0,2*n)
+  for (i in (1:nreps)){
+    at_least_once_probs <- dloop(n, 1)
+    # find longest loop (take the index of the last non-zero position in the at_least_once_probs vector)
+    x <- tail(which(at_least_once_probs!= 0), 1)
+    longest_count[x] <- longest_count[x] + 1
+  }
+  # return vector of probabilities
+  return (longest_count/nreps)
+}
+
+data_longest_loop <- longest_loop(50, 10000)
+
+# probaility that longest loop is between 1 and 50 (aka. not longer than 50)
+longest_50_prob <- sum(data_longest_loop[1:50])
+cat("Probability that there is no loop longer than 50 is approximatelly ", longest_50_prob*100, "%.")
+cat("This matches the result of our earlier simulation!")
+
+# Visualising longest loop length probability distribution
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
+# use different colours for values <=50 and >50
+colours <- c(rep("green3",50), rep("red",50)) 
+barplot(data_longest_loop*100, names.arg = c(1:100), col= colours, 
+        xlab="Length of longest loop (L)", ylab="Probability (%)")
+title("Probability distribution of longest loop length (n=50)")
+text(x=30,y=1.7,labels="P(L<=50) = 0.31", col="darkgreen")
+text(x=90,y=1.7,labels="P(L>50) = 0.69", col="red")
 
 
