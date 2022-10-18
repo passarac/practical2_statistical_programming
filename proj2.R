@@ -24,7 +24,27 @@
   # Strategy 3: They open n boxes at random, checking each card for their number.
 
 
+
 # Helper / Additional functions
+
+# get pall_success_vec
+
+get_pall_success_vec <- function(n, strategy, nreps) {
+  success_vec <- rep(0,nreps)
+  two_n <- as.integer(n+n)
+  for(i in 1:nreps){
+    card_numbers <- sample(1:two_n)
+    prisoners_success <- rep(1,two_n)
+    for(prisoner_num in 1:two_n){ 
+      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
+    }
+    # calculate how many prisoners succeeded in current simulation by summing over their successes
+    success_vec[i] <- sum(prisoners_success)
+  }
+  return(success_vec)
+}
+
+# is_successful function
 
 is_successful <- function(n, pris_n, card_num, strategy) {
   if(strategy == 3) {
@@ -57,20 +77,10 @@ pone <- function(n, k, strategy, nreps) {
 # pall function
 
 pall <- function(n, strategy, nreps) {
-  success_vec <- rep(0,nreps)
-  two_n <- as.integer(n+n)
-  for(i in 1:nreps){
-    card_numbers <- sample(1:two_n)
-    prisoners_success <- rep(1,two_n)
-    for(prisoner_num in 1:two_n){ 
-      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
-    }
-    # calculate how many prisoners succeeded in current simulation by summing over their successes
-    success_vec[i] <- sum(prisoners_success)
-  }
+  success_vec <- get_pall_success_vec(n, strategy, nreps)
   # p_success = (number of simulations all prisoners succeed)/(number of simulations) 
-  probability_all_succeed <- (length(success_vec[success_vec == two_n])/nreps)
-  return(list(probability_all_succeed, success_vec))
+  probability_all_succeed <- (length(success_vec[success_vec == as.integer(n+n)])/nreps)
+  return(probability_all_succeed)
 }
 
 
@@ -102,12 +112,12 @@ cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), "
 
 n = 50
 # save results to plot later
-strategy_1_all50 <- pall(n,1,num_trials)
-strategy_2_all50 <- pall(n,2,num_trials)
-strategy_3_all50 <- pall(n,3,num_trials)
-cat("Strategy 1 resulted in probability of ", unlist(strategy_1_all50[1]), ".",sep="")
-cat("Strategy 2 resulted in probability of ", unlist(strategy_2_all50[1]), ".",sep="")
-cat("Strategy 3 resulted in probability of ", unlist(strategy_3_all50[1]), ".",sep="")
+strategy_1_all50 <- get_pall_success_vec(n,1,num_trials)
+strategy_2_all50 <- get_pall_success_vec(n,2,num_trials)
+strategy_3_all50 <- get_pall_success_vec(n,3,num_trials)
+cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
+cat("Strategy 2 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
+cat("Strategy 3 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
 
 
 # In this section, we elaborate why the results are surprising.
@@ -132,9 +142,9 @@ cat("Strategy 3 resulted in probability of ", unlist(strategy_3_all50[1]), ".",s
 # PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
 # NOTE: these figures might be overwritten by later figures, please rerun following 4 lines if you want to see the figures again
 par(mfrow=c(1,3))
-hist(unlist(strategy_1_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 1 (n=50)")
-hist(unlist(strategy_2_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 2 (n=50)")
-hist(unlist(strategy_3_all50[2]), breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 3 (n=50)")
+hist(strategy_1_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 1 (n=50)")
+hist(strategy_2_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 2 (n=50)")
+hist(strategy_3_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 3 (n=50)")
 
 # We see that in strategy 1, either all prisoners win together or the majority loses together.
 # Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
