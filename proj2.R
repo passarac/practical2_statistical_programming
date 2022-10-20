@@ -1,8 +1,11 @@
 # Statistical Programming Coursework 2
 
 # Members and contributions ---------------------------------------------------------------
-## 1. Stefi Tirkova : Q4, Q5, Q6
-## 2. Passara Chanchotisatien: Q1, Q2, Q3
+## 1. Stefi Tirkova (s1713754) : Q4, Q5, Q6, comments
+## 2. Passara Chanchotisatien (s2255740): Q1, Q2, Q3, Q4, comments
+
+# GitHub repo:
+# https://github.com/passaraink/practical2_statistical_programming
 
 # CODE DESCRIPTION
 
@@ -232,7 +235,7 @@ hist(strategy_2_all50, breaks=100, xlab="Successful prisoners count", main = "Hi
 hist(strategy_3_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 3 (n=50)")
 
 # We see that in strategy 1, either all prisoners win together or the majority loses together.
-# Whereas in strategy 3, it is half and half (mostly between 4-60 successful prisoners).
+# Whereas in strategy 3, it is half and half (mostly between 40-60 successful prisoners).
 
 
 
