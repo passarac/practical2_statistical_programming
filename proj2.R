@@ -33,7 +33,8 @@ is_successful <- function(n, pris_n, card_num, strategy) {
   
   # @param n (integer): 2n is the number of prisoners/boxes/cards
   # @param pris_n (integer): current prisoner number
-  # @param card_num (vector): of length 2n containing unique 
+  # @param card_num (vector): of length 2n containing unique  random numbers form 1 to 2n
+  #        and represents the numbers on the card inside the boxes
   # @param strategy (integer): one of the 3 strategies to follow
   
   # @return an integer either 0 or 1, where 0 means that the prisoner was unsuccessful
