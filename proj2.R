@@ -1,6 +1,6 @@
 # Statistical Programming Coursework 2
 
-# Members and contributions ---------------------------------------------------------------
+# Members and contributions ----------------------------------------------------
 ## 1. Stefi Tirkova (s1713754) : Q4, Q5, Q6, comments
 ## 2. Passara Chanchotisatien (s2255740): Q1, Q2, Q3, Q4, comments
 
@@ -9,19 +9,27 @@
 
 # CODE DESCRIPTION
 
-# The purpose of this code is to stimulate the prisoner problem which is defined as follows (from coursework spec):
+# The purpose of this code is to stimulate the prisoner problem which is defined
+# as follows (from coursework spec):
   # • 2n prisoners each have a unique prisoner number from 1 to 2n.
-  # • The prison contains a room in which there are 2n boxes, each with a unique number from 1 to 2n painted
+  # • The prison contains a room in which there are 2n boxes, each with a unique
+  # number from 1 to 2n painted
   # on its lid.
-  # • 2n cards, each printed with a unique number from 1 to 2n, are randomly placed one in each box.
-  # • The prisoners have the task of finding the card with their number on it by opening a maximum on n boxes.
-  # • After each prisoner’s go, the room is returned exactly to its original state and the prisoner is not allowed to
+  # • 2n cards, each printed with a unique number from 1 to 2n, are randomly
+  # placed one in each box.
+  # • The prisoners have the task of finding the card with their number on it by
+  # opening a maximum on n boxes.
+  # • After each prisoner’s go, the room is returned exactly to its original 
+  # state and the prisoner is not allowed to
   # communicate with prisoners yet to have their go.
   # • If all prisoners succeed in finding their number, then they all go free.
 
-# This code calculates the probability of prisoners going free if they follow one of 3 possible strategies (from coursework spec):
-  # Strategy 1: The prisoner starts at the box with their number on it, opens it and reads the number on the card: k, say. If k
-  # is not their prisoner number, they go to box number k, open it and repeat the process until they have either
+# This code calculates the probability of prisoners going free if they follow one
+# of 3 possible strategies (from coursework spec):
+  # Strategy 1: The prisoner starts at the box with their number on it, opens it
+  # and reads the number on the card: k, say. If k
+  # is not their prisoner number, they go to box number k, open it and repeat the
+  # process until they have either
   # found the card with their number on it, or opened n boxes without finding it.
   # Strategy 2: As strategy 1, but starting from a randomly selected box.
   # Strategy 3: They open n boxes at random, checking each card for their number.
@@ -29,25 +37,26 @@
 
 
 is_successful <- function(n, pris_n, card_num, strategy) {
-  # This function checks whether a prisoner is successful in finding their prisoner number or not
+  # This function checks whether a prisoner is successful in finding their 
+  # prisoner number or not
   
   # This is a helper function
   ## This function is called inside get_pall_success_vec and pone
   
   # @param n (integer): 2n is the number of prisoners/boxes/cards
   # @param pris_n (integer): current prisoner number
-  # @param card_num (vector): of length 2n containing unique  random numbers form 1 to 2n
-  #        and represents the numbers on the card inside the boxes
+  # @param card_num (vector): of length 2n containing unique  random numbers form
+  #        1 to 2n and represents the numbers on the card inside the boxes
   # @param strategy (integer): one of the 3 strategies to follow
   
-  # @return an integer either 0 or 1, where 0 means that the prisoner was unsuccessful
-  # and 1 means the prisoner was successful in finding their number
+  # @return an integer either 0 or 1, where 0 means that the prisoner was 
+  # unsuccessful and 1 means the prisoner was successful in finding their number
   
-  # in strategy 3, we generate a vector containing unique numbers from 1 to n (as prisoner 
-  # can only open n boxes)
+  # in strategy 3, we generate a vector containing unique numbers from 1 to n 
+  # (as prisoner can only open n boxes)
   if(strategy == 3) {
-    # if their prisoner number is inside the vector, then it means they would have found their number
-    # the function returns 1 as they are successful
+    # if their prisoner number is inside the vector, then it means they would 
+    # have found their number the function returns 1 as they are successful
     if (pris_n %in% sample(card_num,n)){ return(1) }
     # if not, they were unsuccessful and the function returns 0
     else{ return(0)} 
@@ -57,21 +66,25 @@ is_successful <- function(n, pris_n, card_num, strategy) {
   boxes_opened <- 0
   
   # intitialise the first box to open according to the strategy (1 or 2)
-  current_box_num <- if (strategy == 1) pris_n else if (strategy == 2) sample(as.integer(2*n), 1)
-  # as long as the number of boxes opened by the prisoner is less than n, the prisoner will continue
-  # opening the next box with the same number as the number written on the card
+  current_box_num <- if (strategy == 1) pris_n 
+                    else if (strategy == 2) sample(as.integer(2*n), 1)
+  # as long as the number of boxes opened by the prisoner is less than n, the 
+  # prisoner will continue opening the next box with the same number as the 
+  # number written on the card
   while(boxes_opened < n) {
-    # the prisoner finds the card with their prisoner number. This means they are successful
-    # and the function returns 1.
+    # the prisoner finds the card with their prisoner number. This means they 
+    # are successful and the function returns 1.
     if(card_num[current_box_num] == pris_n) { return(1) }
-    # if the card inside the box they opened does not contain their prisoner number, they continue..
+    # if the card inside the box they opened does not contain their prisoner 
+    # number, they continue..
     # number of boxes opened is incremented by 1
     boxes_opened <- boxes_opened + 1
-    # the prisoner next opens the box with the same number as the number they saw on the card
+    # the prisoner next opens the box with the same number as the number they 
+    # saw on the card
     current_box_num <- card_num[current_box_num]
   }
-  # they have opened n boxes and still have not found their prisoner number; therefore,
-  # the function returns 0
+  # they have opened n boxes and still have not found their prisoner number; 
+  # therefore, the function returns 0
   return (0)  
 }
 
@@ -79,18 +92,19 @@ is_successful <- function(n, pris_n, card_num, strategy) {
 
 get_pall_success_vec <- function(n, strategy, nreps) {
   
-  # simulates the prisoner problem nreps times and keeps track of how many successful prisoners
-  # are there in each trial
+  # simulates the prisoner problem nreps times and keeps track of how many 
+  # successful prisoners are there in each trial
   
   # This is a helper function
-  ## This function is called inside pall
+  # This function is called inside pall
   
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each 
+  #                     simulation
   # @param strategy (integer): one of the 3 strategies to follow
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return success_vec (vector): consisting of nreps elements. The vector stores how many
-  # prisoners successful found their number in each trial.
+  # @return success_vec (vector): consisting of nreps elements. The vector stores
+  # how many prisoners successful found their number in each trial.
   
   # a vector to keep track of how many prisoners are successful in each trial
   success_vec <- rep(0,nreps)
@@ -99,21 +113,20 @@ get_pall_success_vec <- function(n, strategy, nreps) {
   
   # run the simulation nreps times
   for(i in 1:nreps){
-    # randomly generated vector which stores the card numbers inside each box number
-    # (unique numbers from 1 to 2n)
+    # randomly generated vector which stores the card numbers inside each box 
+    # number (unique numbers from 1 to 2n)
     card_numbers <- sample(1:two_n)
     # a vector to store which prisoners were successful in each trial
     prisoners_success <- rep(1,two_n)
     # we do the following for each prisoner
     for(prisoner_num in 1:two_n){ 
-      # call the is_successful function to see whether the prisoner was successful in finding
-      # their prisoner number.
-      # if they were successful the value inside prisoners_success at index prisoners number is
-      # set to 1.If unsuccessful, it will be set to 0.
-      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
+      # if a prisoner is successful, the value inside prisoners_success at index
+      # prisoners number is set to 1.If unsuccessful, it will be set to 0.
+      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, 
+                                                       card_numbers, strategy)
     }
-    # calculate how many prisoners succeeded in current simulation by summing the successes
-    # store that value in success_vec
+    # calculate how many prisoners succeeded in current simulation by summing the
+    # successes store that value in success_vec
     success_vec[i] <- sum(prisoners_success)
   }
   # return number of successful prisoners in each trial as a vector
@@ -123,47 +136,52 @@ get_pall_success_vec <- function(n, strategy, nreps) {
 
 
 pone <- function(n, k, strategy, nreps) {
-  # estimates the probability of a single prisoner finding their number by running the simulation
-  # nreps times
+  # estimates the probability of a single prisoner finding their number by r
+  # unning the simulation nreps times
   
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each 
+  #                     simulation
   # @param k (integer): current prisoner number
   # @param strategy (integer): one of the 3 strategies to follow
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return success_count/nreps (double): the probability that a single prisoner succeeds in finding
-  # their prisoner number
+  # @return (double): the probability that a single prisoner succeeds in finding
+  #                   their prisoner number
   
-  # success_count is a variable to store the number of times a prisoner was successful in finding their
-  # prisoner number out of nreps trials
+  # count successes across simulations 
   success_count <- 0
   
-  # we simulate this nreps times
+  # run simulation nreps times
   for(i in 1:nreps){
-    # call the function is_successful and add the value returned by is_successful to success_count
-    # if the prisoner was successful, success count will be incremented by 1, else 0
-    success_count <- success_count + is_successful(n,k,sample(1:as.integer(n+n)), strategy)
+    # if the prisoner was successful, success count will be incremented by 1, 
+    # else 0
+    success_count <- success_count + is_successful(n,k,sample(1:as.integer(n+n)),
+                                                   strategy)
   }
-  # return the probability which is the number of successes divided by number of trials
+  # return the probability (number of successes divided by number of trials)
   return((success_count / nreps))
 }
 
 
 
 pall <- function(n, strategy, nreps) {
-  # estimates the probability all prisoners find their number/ the probability that they all go free
+  # estimates the probability all prisoners find their number/ the probability 
+  # that they all go free
   
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each
+  #                     simulation
   # @param strategy (integer): one of the 3 strategies to follow
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return probability_all_succeed (double): probability that all prisoners succeed in finding their number
+  # @return probability_all_succeed (double): probability that all prisoners 
+  # succeed in finding their number
   
-  # call the get_pall_success_vec function and assign the value to success_vec_vector
-  # which stores the number of successful prisoners in each trial of 1 to nreps trials
+  # get the number of successful prisoners in each trial of 1 to nreps trials
   success_vec <- get_pall_success_vec(n, strategy, nreps)
-  # p_success = (number of simulations all prisoners succeed)/(number of simulations) 
-  probability_all_succeed <- (length(success_vec[success_vec == as.integer(n+n)])/nreps)
+  # p_success = (number of simulations all prisoners succeed)/
+  #             (number of simulations) 
+  probability_all_succeed <- (length(success_vec[success_vec == as.integer(n+n)])
+                              /nreps)
   # return the probability that all prisoners succeed in finding their number
   return(probability_all_succeed)
 }
