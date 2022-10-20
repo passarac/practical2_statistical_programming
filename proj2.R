@@ -188,8 +188,10 @@ pall <- function(n, strategy, nreps) {
 
 
 
-# Here, we estimate the individual and joint success probabilities for each strategy
-# for when n = 5 and n = 50.
+
+
+# Here, we estimate the individual and joint success probabilities for each#
+# strategy for when n = 5 and n = 50.
 
 num_trials = 10000
 
@@ -197,88 +199,106 @@ num_trials = 10000
 print("Estimating the probability of a single prisoner succeeding:")
 n = 5
 print("n = 5")
-cat("Strategy 1 resulted in probability of ", pone(n, 3, 1,num_trials), ".",sep="")
-cat("Strategy 2 resulted in probability of ", pone(n, 3, 2,num_trials), ".",sep="")
-cat("Strategy 3 resulted in probability of ", pone(n, 3, 3,num_trials), ".",sep="")
+cat("Strategy 1 has probability of ", pone(n, 3, 1,num_trials), ".",sep="")
+cat("Strategy 2 has probability of ", pone(n, 3, 2,num_trials), ".",sep="")
+cat("Strategy 3 has probability of ", pone(n, 3, 3,num_trials), ".",sep="")
 
 n = 50
-cat("Strategy 1 resulted in probability of ", pone(n, 34, 1,num_trials), ".",sep="")
-cat("Strategy 2 resulted in probability of ", pone(n, 34, 2,num_trials), ".",sep="")
-cat("Strategy 3 resulted in probability of ", pone(n, 34, 3,num_trials), ".",sep="")
+print("n = 50")
+cat("Strategy 1 has probability of ", pone(n, 34, 1,num_trials), ".",sep="")
+cat("Strategy 2 has probability of ", pone(n, 34, 2,num_trials), ".",sep="")
+cat("Strategy 3 has probability of ", pone(n, 34, 3,num_trials), ".",sep="")
 
 
 # all prisoners succeeding in finding their number
 print("Estimating the probability of all prisoners succeeding:")
 n = 5
-cat("Strategy 1 resulted in probability of ", unlist(pall(n,1,num_trials)[1]), ".",sep="")
-cat("Strategy 2 resulted in probability of ", unlist(pall(n,2,num_trials)[1]), ".",sep="")
-cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), ".",sep="")
+print("n = 5")
+cat("Strategy 1 has probability of ", unlist(pall(n,1,num_trials)[1]), sep="")
+cat("Strategy 2 has probability of ", unlist(pall(n,2,num_trials)[1]), sep="")
+cat("Strategy 3 has probability of ", unlist(pall(n,3,num_trials)[1]), sep="")
 
 n = 50
+print("n = 50")
 cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
 cat("Strategy 2 resulted in probability of ", pall(n,2,num_trials), ".",sep="")
 cat("Strategy 3 resulted in probability of ", pall(n,3,num_trials), ".",sep="")
 
 
+
+
 # In this section, we elaborate why the results are surprising.
 
-## From running the simulations, we are able to see that one of the three strategies works
-# surprisingly - strategy 1 which gives an approximate 31% chance of all
-# prisoners succeeding in finding their numbers. 
-# We found this surprising because we know that the probability of one prisoner succeeding is 0.5. 
-# Say if n = 50, and if we were to think about this naively, to find the probability of all prisoners succeeding, 
-# we would do the following calculation:
-# P(success) = (0.5)^100 (where n = 50), 
-# which would give us an extremely extremely low probability (almost zero). 
-# That is why it is surprising to find out that there is a strategy that gives
-# 31% chance of all prisoners succeeding. When we calculate the probability using the 3rd
-# strategy, the probability of each prisoner succeeding is independent of each other. However,
-# when we use Strategy 1, that is no longer the case.
+# From running the simulations, we are able to see that one of the three 
+# strategies works surprisingly - strategy 1 which gives an approximate 31% 
+# chance of all prisoners succeeding in finding their numbers.  We found this
+# surprising because we know that the probability of one prisoner succeeding is
+# 0.5. Say if n = 50, and if we were to think about this naively, to find the 
+# probability all prisoners succeed, we would do the following calculation:
+# P(success) = (0.5)^100 (where n = 50),  which would give us an extremely
+# extremely low probability (almost zero). That is why it is surprising to find
+# that there is a strategy that gives 31% chance of all prisoners succeeding.
+# When we calculate the probability using the 3rd strategy, the probability of 
+# each prisoner succeeding is independent of each other. However, when we use 
+# Strategy 1, that is no longer the case.
 
-# Below we can see the difference in probabilities and number of successful prisoners between 
-# Strategy 1 and Strategy 3. We visualize the frequencies of each number of successful prisoners
-# below for strategies 1, 2, and 3 in the form of histograms.
+# Below we can see the difference in probabilities and number of successful
+# prisoners between Strategy 1 and Strategy 3. We visualize the frequencies of 
+# each number of successful prisoners below for strategies 1, 2, and 3 in the
+# form of histograms.
 
 # save results to plot later
 strategy_1_all50 <- get_pall_success_vec(n,1,num_trials)
 strategy_2_all50 <- get_pall_success_vec(n,2,num_trials)
 strategy_3_all50 <- get_pall_success_vec(n,3,num_trials)
 
-# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
-# NOTE: these figures might be overwritten by later figures, please rerun following 4 lines if you want to see the figures again
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM 
+# PROPERLY. NOTE: these figures might be overwritten by later figures, please
+# rerun following 4 lines if you want to see the figures again
 
 par(mfrow=c(1,3))
-hist(strategy_1_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 1 (n=50)")
-hist(strategy_2_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 2 (n=50)")
-hist(strategy_3_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 3 (n=50)")
 
-# We see that in strategy 1, either all prisoners win together or the majority loses together.
-# Whereas in strategy 3, it is half and half (mostly between 40-60 successful prisoners).
+hist(strategy_1_all50, breaks=100, xlab="Successful prisoners count",
+     main = "Histogram of strategy 1 (n=50)")
 
+hist(strategy_2_all50, breaks=100, xlab="Successful prisoners count",
+     main = "Histogram of strategy 2 (n=50)")
+
+hist(strategy_3_all50, breaks=100, xlab="Successful prisoners count",
+     main = "Histogram of strategy 3 (n=50)")
+
+# We see that in strategy 1, either all prisoners win together or the majority
+# loses together. Whereas in strategy 3, it is half and half (mostly between 
+# 40-60 successful prisoners).
 
 
 
 
 get_loop_len <- function(start_box, random_shuffle, boxes_is_visited){
-  # computes the length of a loop in a random shuffling of cards in boxes given a starting box and
-  # records which boxes have been visited during the loop
+  # computes the length of a loop in a random shuffling of cards in boxes given
+  # a starting box and records which boxes have been visited during the loop.
   
   # This is a helper function
   
   # @param start_box (integer): the first box in the loop to open
-  # @param random_shuffle (integer vector): a random shuffling of cards in boxes 
-  # @param boxes_is_visited (binary vector): vector of boxes visited so far, 
-  #        0 or 1 at index x means box x has not or has been visited, respectively
   
-  # @return (list): a list, where the first element is the length of the current loop 
-  #         and the second is the updated vector of visited boxes that reflects all the newly visited boxes during the loop 
+  # @param random_shuffle (integer vector): a random shuffling of cards in boxes
+  
+  # @param boxes_is_visited (binary vector): vector of boxes visited so far, 
+  # 0 or 1 at index x means box x has not or has been visited, respectively
+  
+  # @return (list): a list, where the first element is the length of the current
+  # loop and the second is the updated vector of visited boxes that reflects all
+  # the newly visited boxes during the loop 
   
   loop_len <- 1
   boxes_is_visited[start_box] <- 1
   current_box <- start_box
-  # iterate while the loop is not closed (i.e. the card in the current box is not the same as the number of the starting box)
+  # iterate while the loop is not closed (i.e. the card in the current box is
+  # not the same as the number of the starting box)
   while (random_shuffle[current_box] != start_box){
-    # update the current box number to the the number on the card in the previous box
+    # update the current box number to the the number on the card in the
+    # previous box
     current_box <- random_shuffle[current_box]
     # increase loop length by 1
     loop_len <- loop_len + 1
@@ -293,15 +313,20 @@ get_loop_len <- function(start_box, random_shuffle, boxes_is_visited){
 
 
 dloop <- function(n, nreps){
-  # computes the probability that at a loop of length from 1 to 2n occurs at least once in a random shuffling of cards in boxes
+  # computes the probability that at a loop of length from 1 to 2n occurs at
+  # least once in a random shuffling of cards in boxes
   
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each
+  # simulation
+  
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return probs (double vector): vector of length 2n, where probs[x] is the probability of loop of length x occuring at least once
+  # @return probs (double vector): vector of length 2n, where probs[x] is the
+  # probability of loop of length x occuring at least once
   
   
-  # vector to store the number of simulations in which a loop of some length (from 1 to 2n) has been seen  
+  # vector to store the number of simulations in which a loop of some length 
+  # (from 1 to 2n) has been seen  
   loop_len_occurances <- rep(0,2*n)
   
   # run simulation nrep times and count occurances of each loop length
@@ -310,22 +335,26 @@ dloop <- function(n, nreps){
     loop_len_occurs <- rep(0,2*n)
     # get a random suffling of cards from 1 to 2n 
     random_shuffle <- sample(1:(2*n))
-    # binary vector to store which boxes have been visited by following the loops so far (as each box can appear in only one loop)
+    # binary vector to store which boxes have been visited by following the 
+    # loops so far (as each box can appear in only one loop)
     boxes_is_visited <- rep(0,2*n)
     # choose a first box to open (any box would be fine to start with)
     start_box <- 1
-    # while there are still some unvisited boxes, go through loops and compute their length
+    # while there are still some unvisited boxes, go through loops and compute 
+    # their length
     while (sum(boxes_is_visited) != 2*n){
       # compute the length of current loop
       result <- get_loop_len(start_box, random_shuffle, boxes_is_visited)
       # update binary vector to reflect that current loop length has occured
       loop_len_occurs[unlist(result[1])] <-  1
-      # update vector of visited boxes to relect the newly visited boxes during the current loop
+      # update vector of visited boxes to relect the newly visited boxes during
+      # the current loop
       boxes_is_visited <- unlist(result[2])
       # choose a new start box by choosing the first non-visited box
       start_box <- which(boxes_is_visited == 0)[1]
     }
-    # at the end of current simulation, add the occurred loop lengths to all the vector of all occurances 
+    # at the end of current simulation, add the occurred loop lengths to all
+    # the vector of all occurances 
     loop_len_occurances <- loop_len_occurances + loop_len_occurs
   }
   
@@ -339,10 +368,11 @@ nreps = 10000
 n = 50
 probs <- dloop(n,nreps)
 
-# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
-# NOTE: Following 2 figures overwrite previous ones, please rerun visualisation code if you want to see previous figures
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM 
+# PROPERLY. NOTE: Following 2 figures overwrite previous ones, please rerun
+# visualisation code if you want to see previous figures
 par(mfrow=c(2,1))
-barplot(probs*100, xlab="Loop length", ylab="Probability (%)", names.arg = c(1:100))
+barplot(probs*100,xlab="Loop length",ylab="Probability (%)",names.arg=c(1:100))
 title("Probability of each loop length occuring at least once (n=50)")
 
 
@@ -350,20 +380,25 @@ title("Probability of each loop length occuring at least once (n=50)")
 
 
 longest_loop <- function(n, nreps){
-  # A group of 2n prisoners will succeed with strategy 1 iff the longest loop is of length at most n
+  # A group of 2n prisoners will succeed with strategy 1 iff the longest loop
+  # is of length at most n
   # This function computes the probability distribution of longest loops
   
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each 
+  # simulation
+  
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return (double vector): vector of length 2n, where vector[x] is the probability of loop of length x being the longest loop
-
+  # @return (double vector): vector of length 2n, where vector[x] is the
+  # probability of loop of length x being the longest loop
+  
   longest_loop_counts <- rep(0,2*n)
   # run simulation nrep times
   for (i in (1:nreps)){
     # get loop lengths that occur in a single simulation
     at_least_once_probs <- dloop(n, 1)
-    # find longest loop (take the index of the last non-zero position in the at_least_once_probs vector)
+    # find longest loop (take the index of the last non-zero position in the
+    # at_least_once_probs vector)
     x <- tail(which(at_least_once_probs!= 0), 1)
     # update longest loop count
     longest_loop_counts[x] <- longest_loop_counts[x] + 1
@@ -376,14 +411,18 @@ longest_loop <- function(n, nreps){
 data_longest_loop <- longest_loop(50, 10000)
 
 
-# probaility that longest loop is between 1 and 50 (aka. not longer than 50)
+# probability that longest loop is between 1 and 50 (aka. not longer than 50)
 longest_50_prob <- sum(data_longest_loop[1:50])
-cat("Probability that there is no loop longer than 50 is approximatelly ", longest_50_prob*100, "%.")
+
+cat("Probability that there is no loop longer than 50 is approximatelly ", 
+    longest_50_prob*100, "%.")
+
 cat("This matches the result of our earlier simulation!")
 
 # Visualising longest loop length probability distribution
 # use different colours for values <=50 and >50
-# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
+# PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE
+# THEM PROPERLY
 colours <- c(rep("green3",50), rep("red",50)) 
 barplot(data_longest_loop*100, names.arg = c(1:100), col= colours, 
         xlab="Length of longest loop (L)", ylab="Probability (%)")
