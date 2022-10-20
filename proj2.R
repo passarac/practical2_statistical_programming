@@ -198,8 +198,8 @@ cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), "
 
 n = 50
 cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
-cat("Strategy 2 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
-cat("Strategy 3 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
+cat("Strategy 2 resulted in probability of ", pall(n,2,num_trials), ".",sep="")
+cat("Strategy 3 resulted in probability of ", pall(n,3,num_trials), ".",sep="")
 
 
 # In this section, we elaborate why the results are surprising.
