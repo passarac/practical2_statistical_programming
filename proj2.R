@@ -25,100 +25,145 @@
 
 
 
-
-
-get_pall_success_vec <- function(n, strategy, nreps) {
-  # ....
-  # This is a helper function
-  
-  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
-  # @param strategy (integer): one of the 3 strategies to follow
-  # @param nreps (integer): number of replicate simulations to run
-  
-  # @return 
-  
-  
-  success_vec <- rep(0,nreps)
-  two_n <- as.integer(n+n)
-  for(i in 1:nreps){
-    card_numbers <- sample(1:two_n)
-    prisoners_success <- rep(1,two_n)
-    for(prisoner_num in 1:two_n){ 
-      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
-    }
-    # calculate how many prisoners succeeded in current simulation by summing over their successes
-    success_vec[i] <- sum(prisoners_success)
-  }
-  return(success_vec)
-}
-
-
 is_successful <- function(n, pris_n, card_num, strategy) {
-  # ....
+  # This function checks whether a prisoner is successful in finding their prisoner number or not
   
   # This is a helper function
+  ## This function is called inside get_pall_success_vec and pone
   
   # @param n (integer): 2n is the number of prisoners/boxes/cards
   # @param pris_n (integer): current prisoner number
-  # @param card_num (integer): ....
+  # @param card_num (vector): of length 2n containing unique 
   # @param strategy (integer): one of the 3 strategies to follow
   
-  # @return 
+  # @return an integer either 0 or 1, where 0 means that the prisoner was unsuccessful
+  # and 1 means the prisoner was successful in finding their number
   
-  
+  # in strategy 3, we generate a vector containing unique numbers from 1 to n (as prisoner 
+  # can only open n boxes)
   if(strategy == 3) {
-    if (pris_n %in% sample(card_num,n)){ return(1) } 
+    # if their prisoner number is inside the vector, then it means they would have found their number
+    # the function returns 1 as they are successful
+    if (pris_n %in% sample(card_num,n)){ return(1) }
+    # if not, they were unsuccessful and the function returns 0
     else{ return(0)} 
   } 
+  
+  # at the start the prisoner has opened 0 boxes
   boxes_opened <- 0
-  # intitialise the first box to open according to the strategy
-  # I THINK THIS IS EASIER TO READ
+  
+  # intitialise the first box to open according to the strategy (1 or 2)
   current_box_num <- if (strategy == 1) pris_n else if (strategy == 2) sample(as.integer(2*n), 1)
-  # current_box_num <- c(pris_n, sample(as.integer(n+n), 1))[strategy]
+  # as long as the number of boxes opened by the prisoner is less than n, the prisoner will continue
+  # opening the next box with the same number as the number written on the card
   while(boxes_opened < n) {
+    # the prisoner finds the card with their prisoner number. This means they are successful
+    # and the function returns 1.
     if(card_num[current_box_num] == pris_n) { return(1) }
+    # if the card inside the box they opened does not contain their prisoner number, they continue..
+    # number of boxes opened is incremented by 1
     boxes_opened <- boxes_opened + 1
+    # the prisoner next opens the box with the same number as the number they saw on the card
     current_box_num <- card_num[current_box_num]
   }
+  # they have opened n boxes and still have not found their prisoner number; therefore,
+  # the function returns 0
   return (0)  
 }
 
 
 
+get_pall_success_vec <- function(n, strategy, nreps) {
+  
+  # simulates the prisoner problem nreps times and keeps track of how many successful prisoners
+  # are there in each trial
+  
+  # This is a helper function
+  ## This function is called inside pall
+  
+  # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
+  # @param strategy (integer): one of the 3 strategies to follow
+  # @param nreps (integer): number of replicate simulations to run
+  
+  # @return success_vec (vector): consisting of nreps elements. The vector stores how many
+  # prisoners successful found their number in each trial.
+  
+  # a vector to keep track of how many prisoners are successful in each trial
+  success_vec <- rep(0,nreps)
+  # declare a variable to store 2n
+  two_n <- as.integer(n+n)
+  
+  # run the simulation nreps times
+  for(i in 1:nreps){
+    # randomly generated vector which stores the card numbers inside each box number
+    # (unique numbers from 1 to 2n)
+    card_numbers <- sample(1:two_n)
+    # a vector to store which prisoners were successful in each trial
+    prisoners_success <- rep(1,two_n)
+    # we do the following for each prisoner
+    for(prisoner_num in 1:two_n){ 
+      # call the is_successful function to see whether the prisoner was successful in finding
+      # their prisoner number.
+      # if they were successful the value inside prisoners_success at index prisoners number is
+      # set to 1.If unsuccessful, it will be set to 0.
+      prisoners_success[prisoner_num] <- is_successful(n, prisoner_num, card_numbers, strategy)
+    }
+    # calculate how many prisoners succeeded in current simulation by summing the successes
+    # store that value in success_vec
+    success_vec[i] <- sum(prisoners_success)
+  }
+  # return number of successful prisoners in each trial as a vector
+  return(success_vec)
+}
+
+
+
 pone <- function(n, k, strategy, nreps) {
-  # ....
+  # estimates the probability of a single prisoner finding their number by running the simulation
+  # nreps times
   
   # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
   # @param k (integer): current prisoner number
   # @param strategy (integer): one of the 3 strategies to follow
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return 
+  # @return success_count/nreps (double): the probability that a single prisoner succeeds in finding
+  # their prisoner number
   
-  
+  # success_count is a variable to store the number of times a prisoner was successful in finding their
+  # prisoner number out of nreps trials
   success_count <- 0
+  
+  # we simulate this nreps times
   for(i in 1:nreps){
+    # call the function is_successful and add the value returned by is_successful to success_count
+    # if the prisoner was successful, success count will be incremented by 1, else 0
     success_count <- success_count + is_successful(n,k,sample(1:as.integer(n+n)), strategy)
   }
+  # return the probability which is the number of successes divided by number of trials
   return((success_count / nreps))
 }
 
-# pall function
+
 
 pall <- function(n, strategy, nreps) {
-  # ....
+  # estimates the probability all prisoners find their number/ the probability that they all go free
   
   # @param n (integer): 2n is the number of prisoners/boxes/cards in each simulation
   # @param strategy (integer): one of the 3 strategies to follow
   # @param nreps (integer): number of replicate simulations to run
   
-  # @return 
+  # @return probability_all_succeed (double): probability that all prisoners succeed in finding their number
   
+  # call the get_pall_success_vec function and assign the value to success_vec_vector
+  # which stores the number of successful prisoners in each trial of 1 to nreps trials
   success_vec <- get_pall_success_vec(n, strategy, nreps)
   # p_success = (number of simulations all prisoners succeed)/(number of simulations) 
   probability_all_succeed <- (length(success_vec[success_vec == as.integer(n+n)])/nreps)
+  # return the probability that all prisoners succeed in finding their number
   return(probability_all_succeed)
 }
+
 
 
 # Here, we estimate the individual and joint success probabilities for each strategy
@@ -148,10 +193,6 @@ cat("Strategy 2 resulted in probability of ", unlist(pall(n,2,num_trials)[1]), "
 cat("Strategy 3 resulted in probability of ", unlist(pall(n,3,num_trials)[1]), ".",sep="")
 
 n = 50
-# save results to plot later
-strategy_1_all50 <- get_pall_success_vec(n,1,num_trials)
-strategy_2_all50 <- get_pall_success_vec(n,2,num_trials)
-strategy_3_all50 <- get_pall_success_vec(n,3,num_trials)
 cat("Strategy 1 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
 cat("Strategy 2 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
 cat("Strategy 3 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
@@ -176,8 +217,14 @@ cat("Strategy 3 resulted in probability of ", pall(n,1,num_trials), ".",sep="")
 # Strategy 1 and Strategy 3. We visualize the frequencies of each number of successful prisoners
 # below for strategies 1, 2, and 3 in the form of histograms.
 
+# save results to plot later
+strategy_1_all50 <- get_pall_success_vec(n,1,num_trials)
+strategy_2_all50 <- get_pall_success_vec(n,2,num_trials)
+strategy_3_all50 <- get_pall_success_vec(n,3,num_trials)
+
 # PLEASE MAKE SURE TO OPEN PLOTS IN LARGE ENOUGH WINDOW IN ORDER TO SEE THEM PROPERLY
 # NOTE: these figures might be overwritten by later figures, please rerun following 4 lines if you want to see the figures again
+
 par(mfrow=c(1,3))
 hist(strategy_1_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 1 (n=50)")
 hist(strategy_2_all50, breaks=100, xlab="Successful prisoners count", main = "Histogram of strategy 2 (n=50)")
@@ -219,6 +266,9 @@ get_loop_len <- function(start_box, random_shuffle, boxes_is_visited){
   return (list(loop_len, boxes_is_visited))
   
 }
+
+
+
 
 dloop <- function(n, nreps){
   # computes the probability that at a loop of length from 1 to 2n occurs at least once in a random shuffling of cards in boxes
@@ -275,6 +325,8 @@ title("Probability of each loop length occuring at least once (n=50)")
 
 
 
+
+
 longest_loop <- function(n, nreps){
   # A group of 2n prisoners will succeed with strategy 1 iff the longest loop is of length at most n
   # This function computes the probability distribution of longest loops
@@ -298,7 +350,9 @@ longest_loop <- function(n, nreps){
   return (longest_loop_counts/nreps)
 }
 
+
 data_longest_loop <- longest_loop(50, 10000)
+
 
 # probaility that longest loop is between 1 and 50 (aka. not longer than 50)
 longest_50_prob <- sum(data_longest_loop[1:50])
